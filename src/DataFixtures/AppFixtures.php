@@ -13,11 +13,10 @@ class AppFixtures extends Fixture
         for ($i=0; $i < 20; $i++) 
         { 
             $disque = new Disque();
-            
+            $disque->setNomDisque('Disque' . $i);
             $manager->persist($disque);
         }
         
-
         $manager->flush();
     }
 }
