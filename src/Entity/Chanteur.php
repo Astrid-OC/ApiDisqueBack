@@ -6,6 +6,8 @@ use App\Repository\ChanteurRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+
 
 #[ORM\Entity(repositoryClass: ChanteurRepository::class)]
 class Chanteur
@@ -13,9 +15,11 @@ class Chanteur
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["getDisques"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["getDisques"])]
     private ?string $nomChanteur = null;
 
     /**
