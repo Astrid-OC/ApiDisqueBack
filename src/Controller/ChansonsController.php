@@ -13,6 +13,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ChansonsController extends AbstractController
 {
@@ -42,9 +43,16 @@ class ChansonsController extends AbstractController
     }
 
     #[Route('/api/chansons', name: 'createChansons', methods:['POST'])]
-    public function createChansons(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, UrlGeneratorInterface $urlGenerator): JsonResponse
+    public function createChansons(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, UrlGeneratorInterface $urlGenerator, ValidatorInterface $validator): JsonResponse
     {
         $chansons = $serializer->deserialize($request->getContent(), Chansons::class, 'json');
+        //on vérif les erreurs.
+        $errors = $validator->validate($chansons);
+
+        if ($errors->count() > 0) 
+        {
+            return new JsonResponse($serializer->serialize($errors, 'json'), JsonResponse::HTTP_BAD_REQUEST, [], true);
+        }
         $em->persist($chansons);
         $em->flush();
 

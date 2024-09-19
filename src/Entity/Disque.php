@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: DisqueRepository::class)]
 class Disque
@@ -19,8 +20,10 @@ class Disque
 
     #[ORM\Column(length: 255)]
     #[Groups(["getDisques"])]
+    #[Assert\NotBlank(message: "Le nom du disque est obligatoire")]
+    #[Assert\Length(min: 1, max: 255, minMessage: "Le nom doit faire au moins {{ limit }} caractères", maxMessage:"Le nom ne peut pas faire plus de {{ limit }} caractères")]
     private ?string $NomDisque = null;
-
+    //relation effectuée entre disque et chanteur.
     #[ORM\ManyToOne(inversedBy: 'disques')]
     //Permet la suppression en cascade. Les disques seront supprimés en même temps que leur chanteurs quand on voudra supprimer ce dernier.
     #[ORM\JoinColumn(onDelete:"CASCADE")]
@@ -31,6 +34,7 @@ class Disque
      * @var Collection<int, Chansons>
      */
     #[ORM\ManyToMany(targetEntity: Chansons::class, mappedBy: 'disque')]
+    //relation effectuée entre disque et chansons.
     #[Groups(["getDisques"])]
     private Collection $chansons;
 

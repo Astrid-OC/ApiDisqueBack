@@ -14,6 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class DisqueController extends AbstractController
 {
@@ -43,18 +44,26 @@ class DisqueController extends AbstractController
     }
 
     #[Route('/api/disque', name: 'createDisque', methods:['POST'])]
-    public function createDisque(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, UrlGeneratorInterface $urlGenerator, ChanteurRepository $chanteurRepository): JsonResponse
+    public function createDisque(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, UrlGeneratorInterface $urlGenerator, ChanteurRepository $chanteurRepository, ValidatorInterface $validator): JsonResponse
     {
         $disque = $serializer->deserialize($request->getContent(), Disque::class, 'json');
+        //on vérif les erreurs.
+        $errors = $validator->validate($disque);
+
+        if ($errors->count() > 0) 
+        {
+            return new JsonResponse($serializer->serialize($errors, 'json'), JsonResponse::HTTP_BAD_REQUEST, [], true);
+        }
+
+        $em->persist($disque);
+        $em->flush();
+        
         //Récup de l'ensemble des données envoyées sous forme de tableau.
         $content = $request->toArray();
         //Récup de l'idChanteur. S'il n'est pas défini, alors on met -1 par défaut.
         $idChanteur = $content['idChanteur'] ?? -1;
         //On cherche l'auteur qui correspond et on l'assigne au disque, si find ne trouve pas le chanteur alros null sera retoourné.
         $disque->setChanteur($chanteurRepository->find($idChanteur));
-        $em->persist($disque);
-        $em->flush();
-
         $jsonDisque = $serializer->serialize($disque, 'json', ['groups' => 'getDisques']);
         $location = $urlGenerator->generate('detailDisque', ['id' => $disque->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
 

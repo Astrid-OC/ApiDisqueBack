@@ -7,7 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
-
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ChanteurRepository::class)]
 class Chanteur
@@ -20,12 +20,15 @@ class Chanteur
 
     #[ORM\Column(length: 255)]
     #[Groups(["getDisques"])]
+    #[Assert\NotBlank(message: "Le nom du chanteur est obligatoire")]
+    #[Assert\Length(min: 1, max: 255, minMessage: "Le nom doit faire au moins {{ limit }} caractères", maxMessage:"Le nom ne peut pas faire plus de {{ limit }} caractères")]
     private ?string $nomChanteur = null;
 
     /**
      * @var Collection<int, Disque>
      */
     #[ORM\OneToMany(targetEntity: Disque::class, mappedBy: 'chanteur')]
+    //relation effectuée entre chanteur et disque.
     private Collection $disques;
 
     public function __construct()

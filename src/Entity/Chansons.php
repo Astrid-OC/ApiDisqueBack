@@ -7,7 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
-
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ChansonsRepository::class)]
 class Chansons
@@ -20,10 +20,13 @@ class Chansons
 
     #[ORM\Column(length: 255)]
     #[Groups(["getDisques"])]
+    #[Assert\NotBlank(message: "Le titre de la chanson est obligatoire")]
+    #[Assert\Length(min: 1, max: 255, minMessage: "Le titre doit faire au moins {{ limit }} caractères", maxMessage:"Le nom ne peut pas faire plus de {{ limit }} caractères")]
     private ?string $titre = null;
 
     #[ORM\Column]
     #[Groups(["getDisques"])]
+    #[Assert\NotBlank(message: "La durée de la chanson est obligatoire")]
     private ?int $duree = null;
 
     /**
