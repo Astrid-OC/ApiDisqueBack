@@ -16,6 +16,16 @@ class DisqueRepository extends ServiceEntityRepository
         parent::__construct($registry, Disque::class);
     }
 
+    public function findAllWithPagination($page, $limit) 
+    {
+        $qb = $this->createQueryBuilder('b')
+            ->setFirstResult(($page -1)* $limit)
+            ->setMaxResults($limit);
+
+        $query = $qb->getQuery();
+        $query->setFetchMode(Disque::class, "chanteur", \Doctrine\ORM\Mapping\ClassMetadata::FETCH_EAGER);
+            return $query->getResult();
+    }
     //    /**
     //     * @return Disque[] Returns an array of Disque objects
     //     */

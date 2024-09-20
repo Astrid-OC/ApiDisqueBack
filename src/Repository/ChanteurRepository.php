@@ -16,6 +16,17 @@ class ChanteurRepository extends ServiceEntityRepository
         parent::__construct($registry, Chanteur::class);
     }
 
+    public function findAllWithPagination($page, $limit) 
+    {
+        $qb = $this->createQueryBuilder('b')
+            ->setFirstResult(($page -1)* $limit)
+            ->setMaxResults($limit);
+
+        $query = $qb->getQuery();
+        $query->setFetchMode(Chanteur::class, "disque", \Doctrine\ORM\Mapping\ClassMetadata::FETCH_EAGER);
+            return $query->getResult();
+    }
+
     //    /**
     //     * @return Chanteur[] Returns an array of Chanteur objects
     //     */

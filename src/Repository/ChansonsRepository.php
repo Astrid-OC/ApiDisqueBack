@@ -16,6 +16,17 @@ class ChansonsRepository extends ServiceEntityRepository
         parent::__construct($registry, Chansons::class);
     }
 
+    public function findAllWithPagination($page, $limit) 
+    {
+        $qb = $this->createQueryBuilder('b')
+            ->setFirstResult(($page -1)* $limit)
+            ->setMaxResults($limit);
+
+        $query = $qb->getQuery();
+        $query->setFetchMode(Chansons::class, "disque", \Doctrine\ORM\Mapping\ClassMetadata::FETCH_EAGER);
+            return $query->getResult();
+    }
+
     //    /**
     //     * @return Chansons[] Returns an array of Chansons objects
     //     */
