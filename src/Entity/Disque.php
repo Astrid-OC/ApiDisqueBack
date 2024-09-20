@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Hateoas\Configuration\Annotation as Hateoas;
+use JMS\Serializer\Annotation\Since;
 
 /**
 * @Hateoas\Relation(
@@ -67,6 +68,11 @@ class Disque
     #[Groups(["getDisques"])]
     private Collection $chansons;
 
+    #[ORM\Column(length: 255)]
+    #[Groups(["getDisques"])]
+    #[Since("2.0")]
+    private ?string $description = null;
+
     public function __construct()
     {
         $this->chansons = new ArrayCollection();
@@ -124,6 +130,18 @@ class Disque
         if ($this->chansons->removeElement($chanson)) {
             $chanson->removeDisque($this);
         }
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(string $description): static
+    {
+        $this->description = $description;
 
         return $this;
     }

@@ -18,6 +18,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
+use App\Services\VersioningService;
 
 class DisqueController extends AbstractController
 {
@@ -39,9 +40,11 @@ class DisqueController extends AbstractController
     }
 
     #[Route('/api/disque/{id}', name: 'detailDisque', methods:['GET'])]
-    public function getDetailDisque(Disque $disque, SerializerInterface $serializer): JsonResponse
+    public function getDetailDisque(Disque $disque, SerializerInterface $serializer, VersioningService $versioningService): JsonResponse
     {
+        $version = $versioningService->getVersion();
         $context = SerializationContext::create()->setGroups(['getDisques']);
+        $context->setVersion($version);
         $jsonDisque = $serializer->serialize($disque, 'json', $context);
          return new JsonResponse($jsonDisque, Response::HTTP_OK, [], true);
        

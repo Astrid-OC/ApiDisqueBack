@@ -68,6 +68,7 @@ class AppFixtures extends Fixture
         { 
             $disque = new Disque();
             $disque->setNomDisque('Disque' . $i);
+            $disque->setDescription("Description du disque" . $i);
             //on lie le disque à un chanteur pris au hasard dans le tableau des chanteurs.
             $disque->setChanteur($listChanteur[array_rand($listChanteur)]);
             //on lie le disque à une chanson prise au hasard dans le tab des chansons.
