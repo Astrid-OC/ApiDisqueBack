@@ -8,7 +8,36 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use Hateoas\Configuration\Annotation as Hateoas;
 
+/**
+* @Hateoas\Relation(
+* "self",
+* href = @Hateoas\Route(
+* "detailChansons",
+* parameters = { "id" = "expr(object.getId())" }
+* ),
+* exclusion = @Hateoas\Exclusion(groups="getDisques")
+* )
+*
+* @Hateoas\Relation(
+* "delete",
+* href = @Hateoas\Route(
+* "deleteChansons",
+* parameters = { "id" = "expr(object.getId())" },
+* ),
+* exclusion = @Hateoas\Exclusion(groups="getDisques", excludeIf = "expr(not is_granted('ROLE_ADMIN'))"),
+* )
+*
+* @Hateoas\Relation(
+* "update",
+* href = @Hateoas\Route(
+* "updateChansons",
+* parameters = { "id" = "expr(object.getId())" },
+* ),
+* exclusion = @Hateoas\Exclusion(groups="getDisques", excludeIf = "expr(not is_granted('ROLE_ADMIN'))"),
+* )
+*/
 #[ORM\Entity(repositoryClass: ChansonsRepository::class)]
 class Chansons
 {
