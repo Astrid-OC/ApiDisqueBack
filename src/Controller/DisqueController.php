@@ -19,9 +19,43 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use App\Services\VersioningService;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Annotations as OA;
 
 class DisqueController extends AbstractController
 {
+    /**
+    * Cette méthode permet de récupérer l'ensemble des livres.
+    *
+    * @OA\Response(
+    * response=200,
+    * description="Retourne la liste des disques",
+    * @OA\JsonContent(
+    * type="array",
+    * @OA\Items(ref=@Model(type= Disques::class, groups={"getDisques"}))
+    * )
+    * )
+    * @OA\Parameter(
+    * name="page",
+    * in="query",
+    * description="La page que l'on veut récupérer",
+    * @OA\Schema(type="int")
+    * )
+    *
+    * @OA\Parameter(
+    * name="limit",
+    * in="query",
+    * description="Le nombre d'éléments que l'on veut récupérer",
+    * @OA\Schema(type="int")
+    * )
+    * @OA\Tag(name="Disques")
+    *
+    * @param DisqueRepository $bookRepository
+    * @param SerializerInterface $serializer
+    * @param Request $request
+    * @return JsonResponse
+    */
     #[Route('/api/disque', name: 'disque', methods:['GET'])]
     public function getAllDisque(DisqueRepository $disqueRepository, SerializerInterface $serializer, Request $request, TagAwareCacheInterface $cache): JsonResponse
     {
